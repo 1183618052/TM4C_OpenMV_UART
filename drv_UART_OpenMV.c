@@ -9,38 +9,38 @@
 #include "uart.h"
 #include "interrupt.h"
 
-uartPtcType_t uartPtc;/*ÉùÃ÷½ÓÊÕ½á¹¹Ìå*/
+uartPtcType_t uartPtc;/*å£°æ˜æ¥æ”¶ç»“æ„ä½“*/
 line_data l_data = {0,0};
 point_data p_data = {0,0};
 
 void init_drv_OpenMV(void)
 {
-	//Ê¹ÄÜUARTÍâÉè
+	//ä½¿èƒ½UARTå¤–è®¾
 	SysCtlPeripheralEnable(SYSCTL_PERIPH_UART7);
-	//Ê¹ÄÜGPIOÍâÉè
+	//ä½¿èƒ½GPIOå¤–è®¾
 	SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOE);
-	//GPIOÄ£Ê½ÅäÖÃ PE0--RX PE1--TX 
+	//GPIOæ¨¡å¼é…ç½® PE0--RX PE1--TX 
 	GPIOPinConfigure(GPIO_PE0_U7RX);
 	GPIOPinConfigure(GPIO_PE1_U7TX);
-	//GPIOµÄUARTÄ£Ê½ÅäÖÃ
+	//GPIOçš„UARTæ¨¡å¼é…ç½®
 	GPIOPinTypeUART(GPIO_PORTE_BASE, GPIO_PIN_0 | GPIO_PIN_1);
-	//UARTĞ­ÒéÅäÖÃ ²¨ÌØÂÊ115200 8Î» 1Í£Ö¹Î»  ÎŞĞ£ÑéÎ»
+	//UARTåè®®é…ç½® æ³¢ç‰¹ç‡115200 8ä½ 1åœæ­¢ä½  æ— æ ¡éªŒä½
 	UARTConfigSetExpClk(UART7_BASE, SysCtlClockGet(), 115200,
 			(UART_CONFIG_WLEN_8 | UART_CONFIG_STOP_ONE |
 					UART_CONFIG_PAR_NONE));
 	
-	//UART½ûÓÃFIFO Ä¬ÈÏFIFO LevelÎª4/8 ¼Ä´æÆ÷Âú8×Ö½Úºó²úÉúÖĞ¶Ï
-	//½ûÓÃºó½ÓÊÕ1Î»¾Í²úÉúÖĞ¶Ï
+	//UARTç¦ç”¨FIFO é»˜è®¤FIFO Levelä¸º4/8 å¯„å­˜å™¨æ»¡8å­—èŠ‚åäº§ç”Ÿä¸­æ–­
+	//ç¦ç”¨åæ¥æ”¶1ä½å°±äº§ç”Ÿä¸­æ–­
 	UARTFIFODisable(UART7_BASE);
-	//Ê¹ÄÜUART7ÖĞ¶Ï
+	//ä½¿èƒ½UART7ä¸­æ–­
 	IntEnable(INT_UART7);	
-	//Ê¹ÄÜUART7½ÓÊÕÖĞ¶Ï
+	//ä½¿èƒ½UART7æ¥æ”¶ä¸­æ–­
 	UARTIntEnable(UART7_BASE,UART_INT_RX);
-	//UARTÖĞ¶ÏµØÖ·×¢²á
+	//UARTä¸­æ–­åœ°å€æ³¨å†Œ
 	UARTIntRegister(UART7_BASE,UART7IntHandler);
-	//È«¾ÖÖĞ¶ÏÊ¹ÄÜ
+	//å…¨å±€ä¸­æ–­ä½¿èƒ½
 	IntMasterEnable();
-	InitPtcStruct(&uartPtc.uart7Ptc);/*UART³õÊ¼»¯½á¹¹ÌåÖµ,*/
+	InitPtcStruct(&uartPtc.uart7Ptc);/*UARTåˆå§‹åŒ–ç»“æ„ä½“å€¼,*/
 }
 
 void InitPtcStruct(protocolComType_t *pUartPtc)
@@ -49,81 +49,81 @@ void InitPtcStruct(protocolComType_t *pUartPtc)
   pUartPtc->aRxBufIndex  = 0;
 }
 
-/*²Î¿¼ÎÄÕÂ
+/*å‚è€ƒæ–‡ç« 
 https://blog.csdn.net/a1598025967/article/details/81975266
 */
-//UART7ÖĞ¶Ïº¯Êı
+//UART7ä¸­æ–­å‡½æ•°
 void UART7IntHandler(void)
 {
-	//»ñÈ¡ÖĞ¶Ï±êÖ¾ Ô­Ê¼ÖĞ¶Ï×´Ì¬ ²»ÆÁ±ÎÖĞ¶Ï±êÖ¾
+	//è·å–ä¸­æ–­æ ‡å¿— åŸå§‹ä¸­æ–­çŠ¶æ€ ä¸å±è”½ä¸­æ–­æ ‡å¿—
 		//uint32_t flag = UARTIntStatus(UART7_BASE,0);
-	//»ñÈ¡ÖĞ¶Ï±êÖ¾ Ô­Ê¼ÖĞ¶Ï×´Ì¬ ÆÁ±ÎÖĞ¶Ï±êÖ¾
+	//è·å–ä¸­æ–­æ ‡å¿— åŸå§‹ä¸­æ–­çŠ¶æ€ å±è”½ä¸­æ–­æ ‡å¿—
 	uint32_t flag = UARTIntStatus(UART7_BASE,1);
-	//Çå³ıÖĞ¶Ï±êÖ¾
+	//æ¸…é™¤ä¸­æ–­æ ‡å¿—
 	UARTIntClear(UART7_BASE,flag);
 	if(flag&UART_INT_RX)
-		//UARTCharsAvail()//ÅĞ¶ÏFIFOÊÇ·ñ»¹ÓĞÊı¾İ
+		//UARTCharsAvail()//åˆ¤æ–­FIFOæ˜¯å¦è¿˜æœ‰æ•°æ®
 		while(UARTCharsAvail(UART7_BASE))
 		{
-			unsigned char data = UARTCharGet(UART7_BASE); //±£´æ±¾´Î½ÓÊÕÊı¾İ
+			unsigned char data = UARTCharGet(UART7_BASE); //ä¿å­˜æœ¬æ¬¡æ¥æ”¶æ•°æ®
 			//UARTCharPut(UART7_BASE,data);
 			protocolComType_t *pUartPtc = &uartPtc.uart7Ptc;
 			switch (pUartPtc->step){
 				case 0:
-					if(data == FRAME_HEAD_SAME_AA)/*Ö¡Í·ÕıÈ·*/
+					if(data == FRAME_HEAD_SAME_AA)/*å¸§å¤´æ­£ç¡®*/
             {
-                pUartPtc->step = 1;/*Ìø×ªÏÂÒ»²½Öè*/
+                pUartPtc->step = 1;/*è·³è½¬ä¸‹ä¸€æ­¥éª¤*/
                 pUartPtc->aRxBuf_1[pUartPtc->aRxBufIndex++] = data;
             }
 				break;
 			  case 1:
-            if(data == FRAME_HEAD_DIFF_55||data == FRAME_HEAD_DIFF_66)/*Ö¡Í·ÕıÈ·*/
+            if(data == FRAME_HEAD_DIFF_55||data == FRAME_HEAD_DIFF_66)/*å¸§å¤´æ­£ç¡®*/
             {
 							  if(data == FRAME_HEAD_DIFF_55)
-                    pUartPtc->step = 2;/*Ìø×ªµ½²½Öè2*/
+                    pUartPtc->step = 2;/*è·³è½¬åˆ°æ­¥éª¤2*/
                 if(data == FRAME_HEAD_DIFF_66)
-									  pUartPtc->step = 3;/*Ìø×ªµ½²½Öè3*/
+									  pUartPtc->step = 3;/*è·³è½¬åˆ°æ­¥éª¤3*/
 								pUartPtc->aRxBuf_1[pUartPtc->aRxBufIndex++] = data;
             }
             else if(data == FRAME_HEAD_SAME_AA)
-                pUartPtc->step = 1;/*µÚÒ»Ö¡Í·ÖØ¸´£¬»Øµ½µÚ¶şÖ¡Í·ÅĞ¶Ï´¦,AA AA Çé¿ö*/
+                pUartPtc->step = 1;/*ç¬¬ä¸€å¸§å¤´é‡å¤ï¼Œå›åˆ°ç¬¬äºŒå¸§å¤´åˆ¤æ–­å¤„,AA AA æƒ…å†µ*/
             else
-                InitPtcStruct(pUartPtc);/*³õÊ¼»¯½á¹¹ÌåÖµ,×¼±¸ÏÂÒ»´Î½ÓÊÕ*/
+                InitPtcStruct(pUartPtc);/*åˆå§‹åŒ–ç»“æ„ä½“å€¼,å‡†å¤‡ä¸‹ä¸€æ¬¡æ¥æ”¶*/
         break;
 				
         case 2:   //FRAME_HEAD_DIFF_55
-            if(data == FRAME_TAIL_SAME_BB)/*¼ì²âµ½Ö¡Î²£¬½ÓÊÕ³É¹¦*/
+            if(data == FRAME_TAIL_SAME_BB)/*æ£€æµ‹åˆ°å¸§å°¾ï¼Œæ¥æ”¶æˆåŠŸ*/
             {
                 pUartPtc->aRxBuf_1[pUartPtc->aRxBufIndex++] = data;
 
 							  if(RX_BUF_1_LENGTH > pUartPtc->aRxBufIndex )
-                {/*Êı¾İÓĞ¶ªÊ§½ÓÊÕÊ§°Ü*/
-                    InitPtcStruct(pUartPtc);/*³õÊ¼»¯½á¹¹ÌåÖµ,×¼±¸ÏÂÒ»´Î½ÓÊÕ*/
+                {/*æ•°æ®æœ‰ä¸¢å¤±æ¥æ”¶å¤±è´¥*/
+                    InitPtcStruct(pUartPtc);/*åˆå§‹åŒ–ç»“æ„ä½“å€¼,å‡†å¤‡ä¸‹ä¸€æ¬¡æ¥æ”¶*/
                 }
 								else
 								{
 									p_data.x_point_err = bytex2_to_int(pUartPtc->aRxBuf_1[2],pUartPtc->aRxBuf_1[3]);
 									p_data.y_point_err = bytex2_to_int(pUartPtc->aRxBuf_1[4],pUartPtc->aRxBuf_1[5]);
 									
-									//´¢´æ±¾´Î½ÓÊÕ³É¹¦Êı¾İ
+									//å‚¨å­˜æœ¬æ¬¡æ¥æ”¶æˆåŠŸæ•°æ®
 								}
 							
-								InitPtcStruct(pUartPtc);/*³õÊ¼»¯½á¹¹ÌåÖµ,×¼±¸ÏÂÒ»´Î½ÓÊÕ*/
+								InitPtcStruct(pUartPtc);/*åˆå§‹åŒ–ç»“æ„ä½“å€¼,å‡†å¤‡ä¸‹ä¸€æ¬¡æ¥æ”¶*/
             }
             else
             {
-                pUartPtc->aRxBuf_1[pUartPtc->aRxBufIndex++] = data;/*Ñ¹Èë»º³åÇø*/
+                pUartPtc->aRxBuf_1[pUartPtc->aRxBufIndex++] = data;/*å‹å…¥ç¼“å†²åŒº*/
             }
             break;	
 						
 				case 3:   //FRAME_HEAD_DIFF_66
-            if(data == FRAME_TAIL_SAME_BB)/*¼ì²âµ½Ö¡Î²£¬½ÓÊÕ³É¹¦*/
+            if(data == FRAME_TAIL_SAME_BB)/*æ£€æµ‹åˆ°å¸§å°¾ï¼Œæ¥æ”¶æˆåŠŸ*/
             {
                 pUartPtc->aRxBuf_1[pUartPtc->aRxBufIndex++] = data;
 
 							  if(RX_BUF_1_LENGTH > pUartPtc->aRxBufIndex )
-                {/*Êı¾İÓĞ¶ªÊ§½ÓÊÕÊ§°Ü*/
-                    InitPtcStruct(pUartPtc);/*³õÊ¼»¯½á¹¹ÌåÖµ,×¼±¸ÏÂÒ»´Î½ÓÊÕ*/
+                {/*æ•°æ®æœ‰ä¸¢å¤±æ¥æ”¶å¤±è´¥*/
+                    InitPtcStruct(pUartPtc);/*åˆå§‹åŒ–ç»“æ„ä½“å€¼,å‡†å¤‡ä¸‹ä¸€æ¬¡æ¥æ”¶*/
                 }
 								else
 								{
@@ -132,18 +132,18 @@ void UART7IntHandler(void)
 									
 									
 							
-									//´¢´æ±¾´Î½ÓÊÕ³É¹¦Êı¾İ
+									//å‚¨å­˜æœ¬æ¬¡æ¥æ”¶æˆåŠŸæ•°æ®
 								}
 							
-								InitPtcStruct(pUartPtc);/*³õÊ¼»¯½á¹¹ÌåÖµ,×¼±¸ÏÂÒ»´Î½ÓÊÕ*/
+								InitPtcStruct(pUartPtc);/*åˆå§‹åŒ–ç»“æ„ä½“å€¼,å‡†å¤‡ä¸‹ä¸€æ¬¡æ¥æ”¶*/
             }
             else
             {
-                pUartPtc->aRxBuf_1[pUartPtc->aRxBufIndex++] = data;/*Ñ¹Èë»º³åÇø*/
+                pUartPtc->aRxBuf_1[pUartPtc->aRxBufIndex++] = data;/*å‹å…¥ç¼“å†²åŒº*/
             }
         break;			
         default:
-            InitPtcStruct(pUartPtc);/*³õÊ¼»¯½á¹¹ÌåÖµ,×¼±¸ÏÂÒ»´Î½ÓÊÕ*/
+            InitPtcStruct(pUartPtc);/*åˆå§‹åŒ–ç»“æ„ä½“å€¼,å‡†å¤‡ä¸‹ä¸€æ¬¡æ¥æ”¶*/
         break;				
 				}
 		}
