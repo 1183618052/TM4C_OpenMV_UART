@@ -1,27 +1,27 @@
 #pragma once
 
 #include "Basic.h"
-/*½ÓÊÕ»º³åÇø³¤¶È*/
+/*æ¥æ”¶ç¼“å†²åŒºé•¿åº¦*/
 #define RX_BUF_1_LENGTH         7U
-/*Ö¡Í·³¤¶È*/
+/*å¸§å¤´é•¿åº¦*/
 #define FRAME_HEADER_LENGTH     2U
-/*Ö¡Î²³¤¶È(¼´Ğ£ÑéºÍ)*/
+/*å¸§å°¾é•¿åº¦(å³æ ¡éªŒå’Œ)*/
 #define FRAME_TAIL_LENGTH       1U
-/*Ö¡Í·ÏàÍ¬×Ö½Ú(µÚÒ»×Ö½Ú)*/
+/*å¸§å¤´ç›¸åŒå­—èŠ‚(ç¬¬ä¸€å­—èŠ‚)*/
 #define FRAME_HEAD_SAME_AA      0xAA
-/*Ö¡Î²ÏàÍ¬×Ö½Ú£¨×îºóÒ»¸ö×Ö½Ú£©*/
+/*å¸§å°¾ç›¸åŒå­—èŠ‚ï¼ˆæœ€åä¸€ä¸ªå­—èŠ‚ï¼‰*/
 #define FRAME_TAIL_SAME_BB     0xBB
-/*Ö¡Í·Çø±ğ×Ö½Ú(µÚ¶ş×Ö½Ú)*/
+/*å¸§å¤´åŒºåˆ«å­—èŠ‚(ç¬¬äºŒå­—èŠ‚)*/
 #define FRAME_HEAD_DIFF_55      0x55
 #define FRAME_HEAD_DIFF_66      0x66
-//½ÓÊÕĞ­Òé¹«¹²±äÁ¿ 
+//æ¥æ”¶åè®®å…¬å…±å˜é‡ 
 typedef struct{
-  volatile uint8_t step;           /*switchÓï¾äÌø×ªÌõ¼ş*/
-  volatile uint8_t aRxBufIndex;    /*½ÓÊÕÊı¾İ»º³åÇøË÷Òı*/
+  volatile uint8_t step;           /*switchè¯­å¥è·³è½¬æ¡ä»¶*/
+  volatile uint8_t aRxBufIndex;    /*æ¥æ”¶æ•°æ®ç¼“å†²åŒºç´¢å¼•*/
   uint8_t aRxBuf_1[RX_BUF_1_LENGTH];
 }protocolComType_t;
 
-/*´®¿Ú½ÓÊÕĞ­Òé½á¹¹Ìå*/
+/*ä¸²å£æ¥æ”¶åè®®ç»“æ„ä½“*/
 typedef struct{
   protocolComType_t  uart7Ptc;
 }uartPtcType_t;
@@ -42,6 +42,6 @@ void InitPtcStruct(protocolComType_t *pUartPtc);
 void init_drv_OpenMV();
 short bytex2_to_int(unsigned char dataHigh,unsigned char dataLow);
 
-//UART0µÄÖĞ¶Ï½ø³Ì
+//UART0çš„ä¸­æ–­è¿›ç¨‹
 
 
